@@ -2,11 +2,9 @@ package com.intracomtelecom;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class Log {
-    private Date recordDate;
+    private String recordDate;
     private String OSS;
     private String eNodeB;
     private String cell;
@@ -16,4 +14,17 @@ public class Log {
     private String downlinkCellThroughput;
     private String downlinkPacketLossRate;
     private String downlinkUserThroughput;
+    private String drops;
+    private String estabFailures;
+    private String accessibility;
+    private String retainability;
+    private String uplinkCellThroughput;
+    private String uplinkPacketLossRate;
+    private String uplinkUserThroughput;
+    private String VoLTECallAttempts;
+    private String latitude;
+    private String longitude;
+    private String azimuth;
+    private String parentNetwork;
+    private Long ID;
 }
