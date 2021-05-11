@@ -20,10 +20,9 @@ public class CellLogFilter {
         String dbURL = "jdbc:sqlite::resource:data.sqlite";
         Sql2o sql2o = new Sql2o(dbURL, null, null);
 
-        get("/logs/:eNodeB/:cell", (req, res) -> {
+        get("/logs", (req, res) -> {
             try (Connection conn = sql2o.open()) {
-                log.debug("Fetch all logs for selected Cell and eNodeB");
-                res.type("application/json");
+                log.debug("Fetch all logs");
                 return dataToJson(conn.createQuery("SELECT * FROM PerformanceKPIsHourly")
                         .executeAndFetch(Log.class));
             }
@@ -32,7 +31,6 @@ public class CellLogFilter {
         get("/cells/:eNodeB", (req, res) -> {
             try (Connection conn = sql2o.open()) {
                 log.debug("Fetch all cells of eNodeB " + req.params(":eNodeB"));
-                res.type("application/json");
                 return dataToJson(conn.createQuery("SELECT DISTINCT Cell FROM PerformanceKPIsHourly WHERE eNodeB = :eNodeB")
                         .addParameter("eNodeB", req.params(":eNodeB"))
                         .executeScalarList(String.class));
@@ -42,13 +40,13 @@ public class CellLogFilter {
         get("/enodeb", (req, res) -> {
             try (Connection conn = sql2o.open()) {
                 log.debug("Fetch eNodeB lists");
-                res.type("application/json");
                 return dataToJson(conn.createQuery("SELECT DISTINCT eNodeB FROM PerformanceKPIsHourly")
                         .executeScalarList(String.class));
             }
         });
 
         after((request, response) -> {
+            response.type("application/json");
             response.header("Content-Encoding", "gzip");
         });
     }

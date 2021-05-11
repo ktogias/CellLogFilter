@@ -28,7 +28,7 @@ test {
 
 jar {
     manifest {
-        attributes "Main-Class": 'com.intracomtelecom.Main'
+        attributes "Main-Class": 'com.intracomtelecom.CellLogFilter'
     }
 
     from {
