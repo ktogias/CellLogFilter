@@ -20,7 +20,10 @@ public class CellLogFilter {
         String dbURL = "jdbc:sqlite::resource:data.sqlite";
         Sql2o sql2o = new Sql2o(dbURL, null, null);
 
+        enableCORS("http://localhost:1234","*","*");
+
         get("/logs", (req, res) -> {
+            // TODO: Modify to return only logs for provided eNodeB and Cell.
             try (Connection conn = sql2o.open()) {
                 log.debug("Fetch all logs");
                 return dataToJson(conn.createQuery("SELECT * FROM PerformanceKPIsHourly")
@@ -49,28 +52,33 @@ public class CellLogFilter {
             response.type("application/json");
             response.header("Content-Encoding", "gzip");
         });
+    }
 
-        options("/*",
-                (request, response) -> {
+    // Enables CORS on requests. This method is an initialization method and should be called once.
+    private static void enableCORS(final String origin, final String methods, final String headers) {
 
-                    String accessControlRequestHeaders = request
-                            .headers("Access-Control-Request-Headers");
-                    if (accessControlRequestHeaders != null) {
-                        response.header("Access-Control-Allow-Headers",
-                                accessControlRequestHeaders);
-                    }
+        options("/*", (request, response) -> {
 
-                    String accessControlRequestMethod = request
-                            .headers("Access-Control-Request-Method");
-                    if (accessControlRequestMethod != null) {
-                        response.header("Access-Control-Allow-Methods",
-                                accessControlRequestMethod);
-                    }
+            String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+            }
 
-                    return "OK";
-                });
+            String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+            }
 
-        before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
+            return "OK";
+        });
+
+        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", origin);
+            response.header("Access-Control-Request-Method", methods);
+            response.header("Access-Control-Allow-Headers", headers);
+            // Note: this may or may not be necessary in your particular application
+            response.type("application/json");
+        });
     }
 
     public static String dataToJson(Object data) {
