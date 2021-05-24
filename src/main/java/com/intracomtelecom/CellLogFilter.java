@@ -20,7 +20,7 @@ public class CellLogFilter {
         String dbURL = "jdbc:sqlite::resource:data.sqlite";
         Sql2o sql2o = new Sql2o(dbURL, null, null);
 
-        enableCORS("http://localhost:1234","*","*");
+        enableCORS("*","*","*");
 
         get("/logs", (req, res) -> {
             // TODO: Modify to return only logs for provided eNodeB and Cell.
