@@ -22,14 +22,32 @@ public class CellLogFilter {
 
         enableCORS("*","*","*");
 
-        get("/logs", (req, res) -> {
-            // TODO: Modify to return only logs for provided eNodeB and Cell.
-            try (Connection conn = sql2o.open()) {
-                log.debug("Fetch all logs");
-                return dataToJson(conn.createQuery("SELECT * FROM PerformanceKPIsHourly")
-                        .executeAndFetch(Log.class));
-            }
+        path("/logs", ()->{
+            get("", (req, res) -> {
+                try (Connection conn = sql2o.open()) {
+                    log.debug("Fetch all logs");
+                    return dataToJson(conn.createQuery("SELECT * FROM PerformanceKPIsHourly")
+                            .executeAndFetch(Log.class));
+                }
+            });
+            get("/enodeb/:eNodeB", (req, res) -> {
+                try (Connection conn = sql2o.open()) {
+                    log.debug("Fetch all logs");
+                    return dataToJson(conn.createQuery("SELECT * FROM PerformanceKPIsHourly WHERE eNodeB = :eNodeB")
+                            .addParameter("eNodeB", req.params("eNodeB"))
+                            .executeAndFetch(Log.class));
+                }
+            });
+            get("/cell/:cell", (req, res) -> {
+                try (Connection conn = sql2o.open()) {
+                    log.debug("Fetch all logs");
+                    return dataToJson(conn.createQuery("SELECT * FROM PerformanceKPIsHourly WHERE cell = :cell")
+                            .addParameter("cell", req.params("cell"))
+                            .executeAndFetch(Log.class));
+                }
+            });
         });
+
 
         get("/cells/:eNodeB", (req, res) -> {
             try (Connection conn = sql2o.open()) {
